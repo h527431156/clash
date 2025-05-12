@@ -18,6 +18,9 @@ jobs:
 
       - name: 下载 clash-all.ini 原始文件
         run: curl -sSL https://raw.githubusercontent.com/liandu2024/clash/refs/heads/main/proxy/clash-all.ini -o clash-all.ini
+     
+      - name: 清除旧的生成文件
+        run: rm -f rules/clash-all*.ini
 
       - name: 插入规则到 clash-all.ini
         run: |
