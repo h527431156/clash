@@ -19,53 +19,27 @@ jobs:
       - name: 下载 clash-all.ini 原始文件
         run: curl -sSL https://raw.githubusercontent.com/liandu2024/clash/refs/heads/main/proxy/clash-all.ini -o clash-all.ini
 
-      - name: 插入规则到 clash-all-other.ini
-        run: |
-          awk '
-          BEGIN {
-            insert_done = 0
-            last_proxy_line = 0
-            domestic_line = 0
-          }
-          {
-            lines[NR] = $0
-            if ($0 ~ /^ruleset=🌍 国外/) last_proxy_line = NR
-            if (domestic_line == 0 && $0 ~ /^ruleset=➡️ 国内/) domestic_line = NR
-          }
-          END {
-            for (i = 1; i <= NR; i++) {
-              print lines[i]
-              if (!insert_done && i == last_proxy_line) {
-                while ((getline line < "add-file/add.ini") > 0) print line
-                insert_done = 1
-              }
-            }
-          }
-          ' clash-all-other.ini > rules/clash-all-other.ini
-
       - name: 插入规则到 clash-all.ini
         run: |
-          awk '
-          BEGIN {
-            insert_done = 0
-            last_proxy_line = 0
-            domestic_line = 0
-          }
-          {
-            lines[NR] = $0
-            if ($0 ~ /^ruleset=🌍 国外/) last_proxy_line = NR
-            if (domestic_line == 0 && $0 ~ /^ruleset=➡️ 国内/) domestic_line = NR
-          }
-          END {
-            for (i = 1; i <= NR; i++) {
-              print lines[i]
-              if (!insert_done && i == last_proxy_line) {
-                while ((getline line < "add-file/add.ini") > 0) print line
-                insert_done = 1
-              }
+          awk '{
+            print
+            if ($0 ~ /^;1、域名组/) {
+              while ((getline line < "add-file/add.ini") > 0) print line
+              close("add-file/add.ini")
             }
-          }
-          ' clash-all.ini > rules/clash-all.ini
+          }' rules/clash-all.ini > rules/clash-all.ini.new
+          mv rules/clash-all.ini.new rules/clash-all.ini
+
+      - name: 插入规则到 clash-all-other.ini
+        run: |
+          awk '{
+            print
+            if ($0 ~ /^;1、域名组/) {
+              while ((getline line < "add-file/add.ini") > 0) print line
+              close("add-file/add.ini")
+            }
+          }' rules/clash-all-other.ini > rules/clash-all-other.ini.new
+          mv rules/clash-all-other.ini.new rules/clash-all-other.ini
 
       - name: 提交并推送变更
         env:
