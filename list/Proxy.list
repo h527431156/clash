@@ -1,0 +1,11 @@
+# IP段匹配
+# IP-CIDR,142.171.133.131/32,no-resolve
+
+# 其他网站
+DOMAIN-SUFFIX,keeflys.com
+DOMAIN-SUFFIX,iptvsubscriptionmedia.com
+DOMAIN-SUFFIX,qichiyu.com
+DOMAIN-SUFFIX,blog.laoda.de
+DOMAIN-SUFFIX,joplinapp.org
+DOMAIN-SUFFIX,safebrowsing.googleapis.com
+DOMAIN-SUFFIX,xihs.cc
