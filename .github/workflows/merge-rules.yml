@@ -1,0 +1,58 @@
+name: Merge Clash INI
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  merge-ini:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v3
+
+      - name: 下载原始 Clash INI 文件
+        run: |
+          curl -L "https://raw.githubusercontent.com/liandu2024/clash/refs/heads/main/proxy/clash-all-other.ini" -o original.ini
+
+      - name: 插入 add.ini 到最后一个国外和第一个国内规则之间
+        run: |
+          mapfile -t lines < original.ini
+
+          last_abroad=-1
+          first_domestic=-1
+
+          for i in "${!lines[@]}"; do
+            if [[ "${lines[$i]}" =~ ruleset=🌍\ 国外 ]]; then
+              last_abroad=$i
+            elif [[ "${lines[$i]}" =~ ruleset=➡️\ 国内 ]] && [[ $first_domestic -eq -1 ]]; then
+              first_domestic=$i
+            fi
+          done
+
+          if [[ $last_abroad -eq -1 || $first_domestic -eq -1 || $first_domestic -le $last_abroad ]]; then
+            echo "未找到有效插入点，保留原文件"
+            cp original.ini rules/clash-all-other.ini
+          else
+            {
+              for ((i=0; i<=last_abroad; i++)); do
+                echo "${lines[$i]}"
+              done
+              echo ""
+              cat add-file/add.ini
+              echo ""
+              for ((i=last_abroad+1; i<${#lines[@]}; i++)); do
+                echo "${lines[$i]}"
+              done
+            } > rules/clash-all-other.ini
+          fi
+
+      - name: 提交并推送变更
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'actions@github.com'
+          git add rules/clash-all-other.ini
+          git commit -m "自动合并 Clash 规则文件" || echo "无更改，无需提交"
+          git push
