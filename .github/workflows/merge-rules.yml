@@ -55,4 +55,4 @@ jobs:
           git config --global user.email 'actions@github.com'
           git add rules/clash-all-other.ini
           git commit -m "自动合并 Clash 规则文件" || echo "无更改，无需提交"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
