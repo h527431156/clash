@@ -30,8 +30,7 @@ jobs:
               while ((getline line < "add-file/add.ini") > 0) print line
               close("add-file/add.ini")
             }
-          }' rules/clash-all.ini > rules/clash-all.ini.new
-          mv rules/clash-all.ini.new rules/clash-all.ini
+          }' clash-all.ini > rules/clash-all.ini
 
       - name: 插入规则到 clash-all-other.ini
         run: |
@@ -41,8 +40,7 @@ jobs:
               while ((getline line < "add-file/add.ini") > 0) print line
               close("add-file/add.ini")
             }
-          }' rules/clash-all-other.ini > rules/clash-all-other.ini.new
-          mv rules/clash-all-other.ini.new rules/clash-all-other.ini
+          }' clash-all-other.ini > rules/clash-all-other.ini
 
       - name: 提交并推送变更
         env:
