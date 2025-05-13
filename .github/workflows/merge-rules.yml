@@ -2,7 +2,7 @@ name: 自动合并 Clash 规则文件
 
 on:
   schedule:
-    - cron: '25 * * * *' # 每天凌晨 2 点执行
+    - cron: '0 18 * * *' # 每天凌晨 2 点执行
   workflow_dispatch:    # 支持手动手动运行
 
 jobs:
